@@ -1,0 +1,66 @@
+# ============================================
+# .dockerignore - 排除不需要打包的文件
+# ============================================
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志和临时文件
+*.log
+*.pid
+*.seed
+*.pid.lock
+celerybeat-schedule*
+
+# 存储目录（运行时生成，不需要打包）
+storage/tif/*
+storage/csv/*
+storage/results/*
+storage/logs/*
+
+# 但保留目录结构
+!storage/tif/.gitkeep
+!storage/csv/.gitkeep
+!storage/results/.gitkeep
+!storage/logs/.gitkeep
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# 文档
+doc/
+*.md
+!README.md
+
+# 测试
+tests/
+test_*.py
+*_test.py
+
+# 其他
+.DS_Store
+Thumbs.db
+.env.local
+.env.*.local
+新建文件夹/
+shp/
+sql/

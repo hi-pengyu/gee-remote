@@ -1,0 +1,245 @@
+// base color
+$blue: #2563eb;
+$light-blue: #3b82f6;
+$red: #ef4444;
+$pink: #ec4899;
+$green: #10b981;
+$tiffany: #14b8a6;
+$yellow: #f59e0b;
+$panGreen: #10b981;
+
+// Modern Palette
+$primary: #2563eb;
+$secondary: #64748b;
+$success: #10b981;
+$warning: #f59e0b;
+$danger: #ef4444;
+$info: #64748b;
+
+// 默认主题变量
+$menuText: #e2e8f0;
+$menuActiveText: #ffffff;
+$menuBg: #0f172a; // Slate 900
+$menuHover: #1e293b; // Slate 800
+
+// 浅色主题theme-light
+$menuLightBg: #ffffff;
+$menuLightHover: #f1f5f9;
+$menuLightText: #334155;
+$menuLightActiveText: #2563eb;
+
+// 基础变量
+$base-sidebar-width: 220px;
+$sideBarWidth: 220px;
+
+// 菜单暗色变量
+$base-menu-color: #cbd5e1;
+$base-menu-color-active: #ffffff;
+$base-menu-background: #0f172a;
+$base-sub-menu-background: #020617; // Slate 950
+$base-sub-menu-hover: #1e293b;
+
+// 组件变量
+$--color-primary: $primary;
+$--color-success: $success;
+$--color-warning: $warning;
+$--color-danger: $danger;
+$--color-info: $info;
+
+// Border Radius
+$border-radius-base: 8px;
+$border-radius-small: 4px;
+$border-radius-round: 20px;
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+$shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+$shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+:export {
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+  menuLightBg: $menuLightBg;
+  menuLightHover: $menuLightHover;
+  menuLightText: $menuLightText;
+  menuLightActiveText: $menuLightActiveText;
+  sideBarWidth: $sideBarWidth;
+  // 导出基础颜色
+  blue: $blue;
+  lightBlue: $light-blue;
+  red: $red;
+  pink: $pink;
+  green: $green;
+  tiffany: $tiffany;
+  yellow: $yellow;
+  panGreen: $panGreen;
+  // 导出组件颜色
+  colorPrimary: $--color-primary;
+  colorSuccess: $--color-success;
+  colorWarning: $--color-warning;
+  colorDanger: $--color-danger;
+  colorInfo: $--color-info;
+}
+
+// CSS变量定义
+:root {
+  /* 亮色模式变量 */
+  --sidebar-bg: #{$menuBg};
+  --sidebar-text: #{$menuText};
+  --menu-hover: #{$menuHover};
+  
+  --navbar-bg: #ffffff;
+  --navbar-text: #1e293b;
+  
+  /* splitpanes default-theme 变量 */
+  --splitpanes-default-bg: #ffffff;
+
+  /* Global Design Tokens */
+  --border-radius-base: #{$border-radius-base};
+  --border-radius-small: #{$border-radius-small};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+}
+
+// 暗黑模式变量
+html.dark {
+  /* 默认通用 */
+  --el-bg-color: #0f172a;
+  --el-bg-color-overlay: #1e293b;
+  --el-text-color-primary: #f8fafc;
+  --el-text-color-regular: #cbd5e1;
+  --el-border-color: #334155;
+  --el-border-color-light: #334155;
+
+  /* 侧边栏 */
+  --sidebar-bg: #0f172a;
+  --sidebar-text: #f8fafc;
+  --menu-hover: #1e293b;
+  --menu-active-text: #{$menuActiveText};
+
+  /* 顶部导航栏 */
+  --navbar-bg: #0f172a;
+  --navbar-text: #f8fafc;
+  --navbar-hover: #1e293b;
+
+  /* 标签栏 */
+  --tags-bg: #0f172a;
+  --tags-item-bg: #1e293b;
+  --tags-item-border: #334155;
+  --tags-item-text: #cbd5e1;
+  --tags-item-hover: #334155;
+  --tags-close-hover: #64748b;
+
+  /* splitpanes 组件暗黑模式变量 */
+  --splitpanes-bg: #0f172a;
+  --splitpanes-border: #334155;
+  --splitpanes-splitter-bg: #1e293b;
+  --splitpanes-splitter-hover-bg: #334155;
+
+  /* blockquote 暗黑模式变量 */
+  --blockquote-bg: #1e293b;
+  --blockquote-border: #334155;
+  --blockquote-text: #cbd5e1;
+  
+  /* Cron 时间表达式 模式变量 */
+  --cron-border: #334155;
+
+  /* splitpanes default-theme 暗黑模式变量 */
+  --splitpanes-default-bg: #0f172a;
+
+  /* 侧边栏菜单覆盖 */
+   .sidebar-container {
+    .el-menu-item, .menu-title {
+      color: var(--el-text-color-regular);
+    }
+    & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
+    & .theme-dark .el-sub-menu .el-menu-item {
+      background-color: var(--el-bg-color) !important;
+    }
+  }
+
+  /* 顶部栏栏菜单覆盖 */
+  .el-menu--horizontal {
+    .el-menu-item {
+      &:not(.is-disabled) {
+        &:hover,
+        &:focus {
+          background-color: var(--navbar-hover) !important;
+        }
+      }
+    }
+  }
+
+  /* 分割窗格覆盖 */
+  .splitpanes {
+    background-color: var(--splitpanes-bg);
+
+    .splitpanes__pane {
+      background-color: var(--splitpanes-bg);
+      border-color: var(--splitpanes-border);
+    }
+
+    .splitpanes__splitter {
+      background-color: var(--splitpanes-splitter-bg);
+      border-color: var(--splitpanes-border);
+
+      &:hover {
+        background-color: var(--splitpanes-splitter-hover-bg);
+      }
+
+      &:before,
+      &:after {
+        background-color: var(--splitpanes-border);
+      }
+    }
+  }
+
+  /* 表格样式覆盖 */
+  .el-table {
+    --el-table-header-bg-color: var(--el-bg-color-overlay) !important;
+    --el-table-header-text-color: var(--el-text-color-regular) !important;
+    --el-table-border-color: var(--el-border-color-light) !important;
+    --el-table-row-hover-bg-color: var(--el-bg-color-overlay) !important;
+
+    .el-table__header-wrapper, .el-table__fixed-header-wrapper {
+      th {
+        background-color: var(--el-bg-color-overlay, #f8f8f9) !important;
+        color: var(--el-text-color-regular, #515a6e);
+      }
+    }
+  }
+
+  /* 树组件高亮样式覆盖 */
+  .el-tree {
+    .el-tree-node.is-current > .el-tree-node__content {
+      background-color: var(--el-bg-color-overlay) !important;
+      color: var(--el-color-primary);
+    }
+
+    .el-tree-node__content:hover {
+      background-color: var(--el-bg-color-overlay);
+    }
+  }
+  
+  /* 下拉菜单样式覆盖 */
+  .el-dropdown-menu__item:not(.is-disabled):focus, .el-dropdown-menu__item:not(.is-disabled):hover{
+    background-color: var(--navbar-hover) !important;
+  }
+
+  /* blockquote样式覆盖 */
+  blockquote {
+    background-color: var(--blockquote-bg) !important;
+    border-left-color: var(--blockquote-border) !important;
+    color: var(--blockquote-text) !important;
+  }
+  
+  /* 时间表达式标题样式覆盖 */
+  .popup-result .title {
+    background: var(--cron-border);
+  }
+
+}
+

@@ -1,0 +1,7 @@
+# 阿里云OSS
+oss2==2.18.4
+
+# 其他工具
+python-dotenv==1.0.0
+tenacity==9.1.2  # 错误重试机制
+

@@ -1,0 +1,168 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # FastAPI 服务 - API 层
+  # ============================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gee-remote-api
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      # 数据库配置（远程）
+      - DB_HOST=<REDACTED_REDIS_HOST>
+      - DB_PORT=15432
+      - DB_USER=postgres
+      - DB_PASSWORD=<REDACTED_PASSWORD>
+      - DB_DATABASE=remote_sensing
+      
+      # Redis 配置（远程）
+      - REDIS_HOST=<REDACTED_REDIS_HOST>
+      - REDIS_PORT=16379
+      - REDIS_DB=3
+      - REDIS_PASSWORD=<REDACTED_PASSWORD>
+      
+      # Celery 配置
+      - CELERY_BROKER_URL=redis://:<REDACTED_REDIS_PASSWORD>@<REDACTED_REDIS_HOST>:16379/3
+      - CELERY_RESULT_BACKEND=redis://:<REDACTED_REDIS_PASSWORD>@<REDACTED_REDIS_HOST>:16379/3
+      
+      # GEE 配置
+      - GEE_PROJECT_ID=<REDACTED_GCP_PROJECT_ID>
+      
+      # OSS 配置 (阿里云对象存储)
+      - OSS_ACCESS_KEY_ID=LTAI5t8...
+      - OSS_ACCESS_KEY_SECRET=...
+      - OSS_ENDPOINT=oss-cn-hangzhou.aliyuncs.com
+      - OSS_BUCKET_NAME=remote-sensing-data
+      
+      # 应用配置
+      - DEBUG=false
+      - TZ=Asia/Shanghai
+      
+
+    volumes:
+      # 挂载存储目录（持久化）
+      - ./storage:/app/storage
+      # 挂载模型文件
+      - ./model:/app/model
+      # 挂载 GEE 凭证（如果需要）
+      - ~/.config/earthengine:/root/.config/earthengine:ro
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    # networks:
+    #   - gee-network
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================
+  # Celery Worker - 计算层
+  # ============================================
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gee-remote-worker
+    restart: unless-stopped
+    environment:
+      # 数据库配置（远程）
+      - DB_HOST=<REDACTED_REDIS_HOST>
+      - DB_PORT=15432
+      - DB_USER=postgres
+      - DB_PASSWORD=<REDACTED_PASSWORD>
+      - DB_DATABASE=remote_sensing
+      
+      # Redis 配置（远程）
+      - REDIS_HOST=<REDACTED_REDIS_HOST>
+      - REDIS_PORT=16379
+      - REDIS_DB=3
+      - REDIS_PASSWORD=<REDACTED_PASSWORD>
+      
+      # Celery 配置
+      - CELERY_BROKER_URL=redis://:<REDACTED_REDIS_PASSWORD>@<REDACTED_REDIS_HOST>:16379/3
+      - CELERY_RESULT_BACKEND=redis://:<REDACTED_REDIS_PASSWORD>@<REDACTED_REDIS_HOST>:16379/3
+      
+      # GEE 配置
+      - GEE_PROJECT_ID=<REDACTED_GCP_PROJECT_ID>
+      
+      # OSS 配置 (阿里云对象存储)
+      - OSS_ACCESS_KEY_ID=LTAI5t8...
+      - OSS_ACCESS_KEY_SECRET=...
+      - OSS_ENDPOINT=oss-cn-hangzhou.aliyuncs.com
+      - OSS_BUCKET_NAME=remote-sensing-data
+      
+      # 应用配置
+      - DEBUG=false
+      - TZ=Asia/Shanghai
+
+    volumes:
+      # 挂载存储目录（持久化）
+      - ./storage:/app/storage
+      # 挂载模型文件
+      - ./model:/app/model
+      # 挂载 GEE 凭证
+      - ~/.config/earthengine:/root/.config/earthengine:ro
+    command: celery -A app.celery_app worker --loglevel=info -Q gee_queue --concurrency=2
+    depends_on:
+      - api
+    network_mode: "host"
+
+  # ============================================
+  # Celery Beat - 定时任务调度器（可选）
+  # ============================================
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gee-remote-beat
+    restart: unless-stopped
+    environment:
+      # 数据库配置（远程）
+      - DB_HOST=<REDACTED_REDIS_HOST>
+      - DB_PORT=15432
+      - DB_USER=postgres
+      - DB_PASSWORD=<REDACTED_PASSWORD>
+      - DB_DATABASE=remote_sensing
+      
+      # Redis 配置（远程）
+      - REDIS_HOST=<REDACTED_REDIS_HOST>
+      - REDIS_PORT=16379
+      - REDIS_DB=3
+      - REDIS_PASSWORD=<REDACTED_PASSWORD>
+      
+      # Celery 配置
+      - CELERY_BROKER_URL=redis://:<REDACTED_REDIS_PASSWORD>@<REDACTED_REDIS_HOST>:16379/3
+      - CELERY_RESULT_BACKEND=redis://:<REDACTED_REDIS_PASSWORD>@<REDACTED_REDIS_HOST>:16379/3
+      
+      # GEE 配置
+      - GEE_PROJECT_ID=<REDACTED_GCP_PROJECT_ID>
+      
+      # OSS 配置 (阿里云对象存储)
+      - OSS_ACCESS_KEY_ID=LTAI5t8...
+      - OSS_ACCESS_KEY_SECRET=...
+      - OSS_ENDPOINT=oss-cn-hangzhou.aliyuncs.com
+      - OSS_BUCKET_NAME=remote-sensing-data
+      
+      # 应用配置
+      - TZ=Asia/Shanghai
+      
+
+    volumes:
+      # 挂载 GEE 凭证
+      - ~/.config/earthengine:/root/.config/earthengine:ro
+    command: celery -A app.celery_beat beat --loglevel=info
+    depends_on:
+      - api
+      - worker
+    network_mode: "host"
+
+networks:
+  gee-network:
+    driver: bridge
